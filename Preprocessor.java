@@ -55,6 +55,7 @@ class Reader {
 	    FileWriter fw = new FileWriter(file, true);
 	    PrintWriter writer = new PrintWriter(fw);
 	    for(int i = 0; i < costos.length; ++i) {
+		writer.println(costos.length);
 		writer.print(i+1);
 		for (int j = 0; j < costos.length; ++j) {
 		    writer.print(" " + costos[i][j]);

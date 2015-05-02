@@ -19,18 +19,24 @@ public class TSP {
     static Nodo[] listaNodos;
 
     public static void main(String args[]) {
-	listaNodos = Reader.readInput();
-	TSP tsp = new TSP(listaNodos.length);
+	// listaNodos = Reader.readInput();
+	TSP tsp = new TSP(Reader.readInput());
+	for(int i = 0; i < numNodos; ++i) {
+	    for(int j = 0; j < numNodos; ++j) {
+		System.out.print(costos[i][j] + " ");
+	    }
+	    System.out.println();
+	}
     }
 
-    public TSP (int numNodos) {
-	this.numNodos = numNodos;
+    public TSP (double[][] costos) {
+	this.costos = costos;
+	this.numNodos = costos.length;
 	caminos = new int[numNodos][numNodos];
-	costos = new double[numNodos][numNodos];
+	// costos = new double[numNodos][numNodos];
 	for(int i = 0; i < numNodos; i++) {
 	    for(int j = 0; j < numNodos; j++) {
 		caminos[i][j] = 0;
-		costos[i][j] = -1;
 	    }
 	}
     }
@@ -39,14 +45,14 @@ public class TSP {
       Método: getCosto.
       Función: calcula el costo de ir del nodo id1 al nodo id2.
     */
-    public double getCosto(int id1, int id2) {
+    // public double getCosto(int id1, int id2) {
 	
-	if (costos[id1-1][id2-1] == -1) {
-	    costos[id1-1][id2-1] = Math.sqrt(Math.pow(listaNodos[id2-1].x - listaNodos[id1-1].x, 2) + Math.pow(listaNodos[id2-1].y - listaNodos[id1-1].y, 2));
-	    costos[id2-1][id1-1] = costos[id1-1][id2-1];
-	}
-	return costos[id1-1][id2-1];
-    }
+    // 	if (costos[id1-1][id2-1] == -1) {
+    // 	    costos[id1-1][id2-1] = Math.sqrt(Math.pow(listaNodos[id2-1].x - listaNodos[id1-1].x, 2) + Math.pow(listaNodos[id2-1].y - listaNodos[id1-1].y, 2));
+    // 	    costos[id2-1][id1-1] = costos[id1-1][id2-1];
+    // 	}
+    // 	return costos[id1-1][id2-1];
+    // }
 }
 
 /*
@@ -57,21 +63,21 @@ public class TSP {
   - x: coordenada X del nodo en un plano.
   - y: coordenada Y del nodo en un plano.
 */
-class Nodo {
-    int id;
-    int x;
-    int y;
+// class Nodo {
+//     int id;
+//     int x;
+//     int y;
 
-    public Nodo(int id, int x, int y) {
-	this.id = id;
-	this.x = x;
-	this.y = y;
-    }
+//     public Nodo(int id, int x, int y) {
+// 	this.id = id;
+// 	this.x = x;
+// 	this.y = y;
+//     }
 
-    public String toString() {
-	return "Nodo " + Integer.toString(id);
-    }
-}
+//     public String toString() {
+// 	return "Nodo " + Integer.toString(id);
+//     }
+// }
 
 /*
   Clase: Reader
@@ -87,17 +93,22 @@ class Reader {
       Método: readInput.
       Función: lee la información por entrada estándar y crea la lista de nodos.
     */
-    public static Nodo[] readInput() {
+    public static double[][] readInput() {
 	Scanner scanner = new Scanner(System.in);
-	scanner.nextLine();
-	scanner.nextLine();
-	scanner.nextLine();
-	int numNodos = Integer.parseInt(scanner.nextLine().split(" ")[1]);
-	Nodo[] l = new Nodo[numNodos];
-	scanner.nextLine();
-	scanner.nextLine();
+	// scanner.nextLine();
+	// scanner.nextLine();
+	// scanner.nextLine();
+	// int numNodos = Integer.parseInt(scanner.nextLine().split(" ")[1]);
+	int numNodos = scanner.nextInt();
+	double[][] l = new double[numNodos][numNodos];
+	// scanner.nextLine();
+	// scanner.nextLine();
 	for(int i = 0; i < numNodos; ++i) {
-	    l[i] = new Nodo(scanner.nextInt(), scanner.nextInt(), scanner.nextInt());
+	    scanner.nextDouble();
+	    for(int j = 0; j < numNodos; ++j) {
+		// l[i] = new Nodo(scanner.nextInt(), scanner.nextInt(), scanner.nextInt());
+		l[i][j] = scanner.nextDouble();
+	    }
 	}
 	return l;
     }

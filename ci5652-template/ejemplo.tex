@@ -19,9 +19,11 @@
 
 \title{Titulo del paper}
 
-\author{Emely Arráiz
+\author{Carlos Cruz\\
+Carné: 10-10168
         \and
-        Alejandro Flores}
+        Gabriel Gedler\\
+Carné: 10-10}
 
 %------------------------------ Text -------------------------------------
 
@@ -31,11 +33,37 @@
 
 
 \begin{abstract}
-Una descripción breve del paper.
+El Problema del Agente Viajero o TSP es uno de los problemas más estudiados en la ciencia de la computación. En este trabajo se estudian las mejoras de tiempo que puede ofrecer el uso de metaheurísticas para obtener soluciones óptimas (o subóptimas).
 \end{abstract}
 
-\section{Una sección cualquiera}
+\section{Introducción}
+Actualmente, el Problema del Agente Viajero o TSP (abreviado del inglés \textit{Travelling Salesman Problem}), es uno de los problemas NP-duro más estudiados en la ciencia de la computación; y, debido al gran número de aplicaciones que tiene, se busca poder encontrar soluciones óptima lo más rápido posible. 
+En este trabajo se estudia el uso de metaheurísticas que permitan obtener soluciones óptimas (o subóptimas bastante cercanas a la óptima) en un tiempo considerablemente menor al que utilizaría un algoritmo voraz (\textit{greedy}).
+
 Citan así~\cite{so2005}.
+
+\section{Descripción del problema}
+El Problema del Agente Viajero consiste en, dado un conjunto de ciudades, encontrar el camino más corto posible que pase exactamente una vez por cada ciudad y regrese a la ciudad de partida. Este problema es de complejidad NP-duro (lo que implica que es de complejidad NP) lo que quiere decir que su orden de crecimiento no es polinomial si no, en este caso, el orden es de \textit{O(n!)}.
+
+Este es uno de los problemas de la ciencia de la computación más estudiados actualmente, por el gran número de aplicaciones que tiene, tanto dentro como fuera de la computación, como: planificación de viajes por ciudades, diseño de microchips, estudio de problemas genéticos como secuencias de ADN, entre muchos otros.
+
+
+\section{Trabajos previos}
+Trabajos previos.
+
+\section{Representación de la solución}
+Para modelar este problema se utiliza un grafo implícito en el que cada vértice representa una ciudad, cada arco representa la existencia de un camino entre cada par de ciudades y el peso de cada arco representa el costo de viajar entre cada par de ciudades
+
+Para representarlo computacionalmente se utiliza:
+\begin{itemize}
+\item numNodos: almacena el número de nodos que tiene el grafo.
+\item caminos: es un arreglo de enteros que almacena el número de identificación de la ciudad a la que se viajará a continuación. Esto permite conocer el sucesor de cada nodo en orden de complejidad lineal, lo cual ayuda enormemente para optimizacion 2-opt.
+Tambien otorga la idea de un ciclo dirigido, que tiene mas sentido que con una matriz de adyacencias.
+\item costos: es una matriz de números reales que almacena el costo de viajar entre cualquier par de ciudades (nodos). Esto permite realizar busquedas de costos en orden constante.
+\end{itemize}
+
+\section{Implementación de búsqueda local}
+Búsqueda local.
 
 \begin{algorithm}
  \DontPrintSemicolon
@@ -53,11 +81,6 @@ Citan así~\cite{so2005}.
  \vspace*{0.1cm}
  \caption{Nombre}
 \end{algorithm}
-
-
-\section{Otra sección}
-
-Hola.
 
 \section*{Conclusiones}
 
@@ -77,8 +100,10 @@ C. So and H. So.
 \newblock A groundbreaking result.
 \newblock {\em Journal of Everything}, 59(2):23--37, 2005.
 
-\end{thebibliography}
+\bibitem{}
+  \newblock https://www.cs.ubc.ca/~hutter/previous-earg/EmpAlgReadingGroup/TSP-JohMcg97.pdf
 
+\end{thebibliography}
 
 \newpage
 \section*{Apéndice}

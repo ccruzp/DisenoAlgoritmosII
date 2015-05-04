@@ -33,14 +33,12 @@ Carné: 10-10272}
 
 
 \begin{abstract}
-El Problema del Agente Viajero o TSP es uno de los problemas más estudiados en la ciencia de la computación. En este trabajo se estudian las mejoras de tiempo que puede ofrecer el uso de metaheurísticas para obtener soluciones óptimas (o subóptimas).
+El Problema del Agente Viajero o TSP es uno de los problemas más estudiados en la ciencia de la computación. En este trabajo desarrolla una estructura de datos para el Problema del Agente Viajero y se presenta una implementación de búsqueda local utilizando dicha estructura.
 \end{abstract}
 
 \section{Introducción}
 Actualmente, el Problema del Agente Viajero o TSP (abreviado del inglés \textit{Travelling Salesman Problem}), es uno de los problemas NP-duro más estudiados en la ciencia de la computación; y, debido al gran número de aplicaciones que tiene, se busca poder encontrar soluciones óptimas lo más rápido posible. 
 En este trabajo se estudia el uso de metaheurísticas que permitan obtener soluciones óptimas (o subóptimas bastante cercanas a la óptima) en un tiempo considerablemente menor al que utilizaría un algoritmo voraz (\textit{greedy}).
-
-Citan así~\cite{so2005}.
 
 \section{Descripción del problema}
 El Problema del Agente Viajero consiste en, dado un conjunto de ciudades, encontrar el camino más corto posible que pase exactamente una vez por cada ciudad y regrese a la ciudad de partida. Este problema es de complejidad NP-duro (lo que implica que es de complejidad NP). Esto implica que su orden de crecimiento no es polinomial si no, en este caso, el orden es de \textit{O(n!)}.
@@ -49,7 +47,9 @@ Este es uno de los problemas de la ciencia de la computación más estudiados ac
 
 
 \section{Trabajos previos}
-Trabajos previos.
+Johnson y McGeough\cite{jm1995} sugieren varios algoritmos de recorrido sencillo para generar soluciones iniciales en un problema TSP y, además, recopilan distintas optimizaciones de soluciones iniciales propuestas por diversos autores.
+
+Antosiewicz, Koloch y Kamiński\cite{akk2013} comparan las metaheurísticas más comunes aplicadas al Problema del Agente Viajero.
 
 \section{Representación de la solución}
 Para modelar este problema se utiliza un grafo implícito en el que cada vértice representa una ciudad, cada arco representa la existencia de un camino entre cada par de ciudades y el peso de cada arco representa el costo de viajar entre cada par de ciudades
@@ -62,6 +62,7 @@ Tambien otorga la idea de un ciclo dirigido, que tiene mas sentido que con una m
 \item costos: es una matriz de números reales que almacena el costo de viajar entre cualquier par de ciudades (nodos). Esto permite realizar busquedas de costos en orden constante.
 \end{itemize}
 
+\newpage
 \section{Implementación de búsqueda local}
 Búsqueda local.
 
@@ -74,14 +75,14 @@ Búsqueda local.
  \While {$mejora$} {
 	$mejora$ = false\; 
 	$C'$ = $C$\;
- 	\ForEach{$i = 1\dots |A|$}{
+ 	\ForEach{$i = 1\dots |A|$} {
 		\ForEach{$j = 1\dots |A|$} {
 			int $i'$ = A[i]\;
 			int $j'$ = A[j]\;
 			$CostoViejo$ = M[i][i'] + M[j][j']\;
 			$CostoNuevo$ =  M[i][j'] + M[j][i']\;
 
-	 		 \If{CostoViejo \textgreater CostoNuevo}{
+	 		 \If{CostoViejo \textgreater CostoNuevo} {
 				$mejora$ = true\;
    				$C'$ = $C'$ - CostoViejo + CostoNuevo\;
 				Actualizar los caminos\;
@@ -96,7 +97,7 @@ Búsqueda local.
 
 \section*{Conclusiones}
 
-Aquí concluyen.
+Aquí irán las conclusiones.
 
 %---------------------------- Bibliography -------------------------------
 
@@ -107,19 +108,16 @@ Aquí concluyen.
 
 \begin{thebibliography}{99}
 
-\bibitem{so2005}
-C. So and H. So.
-\newblock A groundbreaking result.
-\newblock {\em Journal of Everything}, 59(2):23--37, 2005.
+\bibitem{jm1995}
+  \newblock Johnson, D. and  McGeoch, L. (1995). \textit{The Traveling Salesman Problem: A Case Study in Local Optimization}. pp. 8-27.
 
-\bibitem{}
-  \newblock https://www.cs.ubc.ca/~hutter/previous-earg/EmpAlgReadingGroup/TSP-JohMcg97.pdf
+\bibitem{akk2013}
+  \newblock Antosiewicz, M., Koloch, G. and Kamiński, B. (2013). \textit{Choice of best possible metaheuristic algorithm for the travelling salesman problem with limited computational time: quality, uncertainty and speed}.
 
 \end{thebibliography}
 
 \newpage
 \section*{Apéndice}
-
-Bla.
+Aquí irá el apéndice.
 
 \end{document}

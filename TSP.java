@@ -121,7 +121,7 @@ class Reader {
       (mediante uno de los archivos output.txt creados con Preprocessor)
     */
     public static double[][] readInput() {
-        File file = new File("C:\\Users\\GabrielAugusto\\Desktop\\Projects\\DAII\\output_a280.txt");
+        File file = new File(System.in);
         try {
             
             Scanner scanner = new Scanner(file);

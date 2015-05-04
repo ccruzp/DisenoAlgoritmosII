@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.9.10)  3 MAY 2015 22:03
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.9.10)  4 MAY 2015 10:18
 entering extended mode
  %&-line parsing enabled.
 **ejemplo.tex
@@ -625,35 +625,39 @@ LaTeX Font Info:    Try loading font information for U+msb on input line 33.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
+) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+
+]
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 92.
+
+(/usr/share/texmf-texlive/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
-Underfull \hbox (badness 10000) in paragraph at lines 104--105
-[] \OT1/cmr/m/n/9 https://www.cs.ubc.ca/ hutter/previous-
- []
-
-[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
-
-
-] [2] (./ejemplo.aux) ) 
+LaTeX Font Info:    Font shape `OML/cmr/m/it' in size <10> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 92.
+ [2] (./ejemplo.aux) ) 
 Here is how much of TeX's memory you used:
- 7622 strings out of 495061
- 103433 string characters out of 1182621
- 214981 words of memory out of 3000000
- 10663 multiletter control sequences out of 15000+50000
+ 7645 strings out of 495061
+ 103790 string characters out of 1182621
+ 210991 words of memory out of 3000000
+ 10674 multiletter control sequences out of 15000+50000
  8743 words of font info for 33 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 38i,14n,45p,420b,470s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
-/cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx7.pfb>
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share
-/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texli
-ve/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/type
-1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-texlive/fonts/type1/public/am
-sfonts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm
-/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9.pfb>
-
-Output written on ejemplo.pdf (2 pages, 126109 bytes).
+ 38i,20n,45p,414b,600s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx7.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
+texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-texliv
+e/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-texlive/fonts/type1/public/ams
+fonts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy7.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/
+texmf-texlive/fonts/type1/public/amsfonts/cm/cmti9.pfb>
+Output written on ejemplo.pdf (2 pages, 151756 bytes).
 PDF statistics:
- 91 PDF objects out of 1000 (max. 8388607)
- 22 named destinations out of 1000 (max. 500000)
+ 111 PDF objects out of 1000 (max. 8388607)
+ 31 named destinations out of 1000 (max. 500000)
  41 words of extra memory for PDF output out of 10000 (max. 10000000)
 

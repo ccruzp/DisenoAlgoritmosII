@@ -16,7 +16,7 @@ public class TSP {
     static int numNodos;
     static int[][] caminos;
     static double[][] costos;
-    static Nodo[] listaNodos;
+    //static Nodo[] listaNodos;
 
     public static void main(String args[]) {
 	// listaNodos = Reader.readInput();

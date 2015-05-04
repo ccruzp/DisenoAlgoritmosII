@@ -23,7 +23,7 @@
 Carné: 10-10168
         \and
         Gabriel Gedler\\
-Carné: 10-10}
+Carné: 10-10272}
 
 %------------------------------ Text -------------------------------------
 
@@ -37,13 +37,13 @@ El Problema del Agente Viajero o TSP es uno de los problemas más estudiados en 
 \end{abstract}
 
 \section{Introducción}
-Actualmente, el Problema del Agente Viajero o TSP (abreviado del inglés \textit{Travelling Salesman Problem}), es uno de los problemas NP-duro más estudiados en la ciencia de la computación; y, debido al gran número de aplicaciones que tiene, se busca poder encontrar soluciones óptima lo más rápido posible. 
+Actualmente, el Problema del Agente Viajero o TSP (abreviado del inglés \textit{Travelling Salesman Problem}), es uno de los problemas NP-duro más estudiados en la ciencia de la computación; y, debido al gran número de aplicaciones que tiene, se busca poder encontrar soluciones óptimas lo más rápido posible. 
 En este trabajo se estudia el uso de metaheurísticas que permitan obtener soluciones óptimas (o subóptimas bastante cercanas a la óptima) en un tiempo considerablemente menor al que utilizaría un algoritmo voraz (\textit{greedy}).
 
 Citan así~\cite{so2005}.
 
 \section{Descripción del problema}
-El Problema del Agente Viajero consiste en, dado un conjunto de ciudades, encontrar el camino más corto posible que pase exactamente una vez por cada ciudad y regrese a la ciudad de partida. Este problema es de complejidad NP-duro (lo que implica que es de complejidad NP) lo que quiere decir que su orden de crecimiento no es polinomial si no, en este caso, el orden es de \textit{O(n!)}.
+El Problema del Agente Viajero consiste en, dado un conjunto de ciudades, encontrar el camino más corto posible que pase exactamente una vez por cada ciudad y regrese a la ciudad de partida. Este problema es de complejidad NP-duro (lo que implica que es de complejidad NP). Esto implica que su orden de crecimiento no es polinomial si no, en este caso, el orden es de \textit{O(n!)}.
 
 Este es uno de los problemas de la ciencia de la computación más estudiados actualmente, por el gran número de aplicaciones que tiene, tanto dentro como fuera de la computación, como: planificación de viajes por ciudades, diseño de microchips, estudio de problemas genéticos como secuencias de ADN, entre muchos otros.
 
@@ -68,18 +68,30 @@ Búsqueda local.
 \begin{algorithm}
  \DontPrintSemicolon
  \vspace*{0.1cm}
- \KwIn{Descripcion}
- \KwOut{Descripcion}
- Primer paso\;
- Segundo\;
- \ForEach{$i = 1\dots n$}{
-  \If{Alguna condición}{
-   Algo aqui\;
-   }
+ \KwIn{Arreglo de caminos A\\       \hspace{1cm} matriz de costos M \\    \hspace{1cm} costo del recorrido C}
+ \KwOut{Nuevo arreglo de caminos A'\\     \hspace{1cm}Nuevo costo del recorrido C'}
+ Boolean $mejora$ = true\;
+ \While {$mejora$} {
+	$mejora$ = false\; 
+	$C'$ = $C$\;
+ 	\ForEach{$i = 1\dots |A|$}{
+		\ForEach{$j = 1\dots |A|$} {
+			int $i'$ = A[i]\;
+			int $j'$ = A[j]\;
+			$CostoViejo$ = M[i][i'] + M[j][j']\;
+			$CostoNuevo$ =  M[i][j'] + M[j][i']\;
+
+	 		 \If{CostoViejo \textgreater CostoNuevo}{
+				$mejora$ = true\;
+   				$C'$ = $C'$ - CostoViejo + CostoNuevo\;
+				Actualizar los caminos\;
+   			}
+		}
+	 }
  }
- \KwRet{Valor}
+ \KwRet{C'}
  \vspace*{0.1cm}
- \caption{Nombre}
+ \caption{2-opt}
 \end{algorithm}
 
 \section*{Conclusiones}

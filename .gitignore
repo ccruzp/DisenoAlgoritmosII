@@ -13,3 +13,8 @@ hs_err_pid*
 
 # emacs temporal files
 *~
+
+# LaTeX shit
+*.pdf
+*.log
+*.tex

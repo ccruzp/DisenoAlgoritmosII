@@ -11,53 +11,71 @@ costos:   Permite realizar busquedas de costos en orden constante. Como los cost
 recorrido:bleh
 
  */
-package tsp;
+// package tsp;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+// import java.io.File;
+// import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Arrays;
 
 public class TabuSearch {
-    int numIterations = 100;
-    int tabuLength = 10;
+    static int numIterations = 1;
+    static int tabuLength = 10;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 	TSP tsp = new TSP(Reader.readInput());
-	TabuList tabu = new TabuList(TSP.numNodes, tabuLength);
-	int currentSol[] = new int[numNodes];
-	for(int i = 0; i < TSP.numNodes; ++i) {
+	TabuList tabu = new TabuList(tsp.numNodes, tabuLength);
+	int currentSol[] = new int[tsp.numNodes+1];
+	for(int i = 1; i <= tsp.numNodes; ++i) {
 	    currentSol[i] = i;
 	}
-	System.arraycopy(currentSol, 0, TSP.solution, 0, numNodes);
-	int bestCost = TSP.getCost(TSP.solution);
+	System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes+1);
+	double bestCost = TSP.getCost(tsp, tsp.solution);
 	for(int i = 0; i < numIterations; ++i) {
+	    System.out.println("Iteración #" + i);
+	    // for(int j = 0; j <= tsp.numNodes; ++j) {
+	    // 	System.out.print(" " + currentSol[j]);
+	    // }
+	    // System.out.println();
+	    // System.out.println();
+	    // System.out.println();
 	    currentSol = TabuSearch.getBestNeighbour(tabu, tsp, currentSol);
-	    int currentCost = TSP.getCost(currentSol);
-	    if(currentCost < bestCost) {
-		System.arraycopy(currentSol, 0, TSP.bestSol, 0, numNodes);
+	    // for(int j = 0; j <= tsp.numNodes; ++j) {
+	    // 	System.out.print(" " + currentSol[j]);
+	    // }
+	    System.out.println();
+	    double currentCost = TSP.getCost(tsp, currentSol);
+	    // System.out.printf("Current: " + currentCost + "\nBest: " + bestCost + "\n");
+	    // System.out.println(currentCost - bestCost);
+	    if(Double.compare(currentCost, bestCost) < 0) {
+		System.out.println("Entré");
+		System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes);
 		bestCost = currentCost;
 	    }
+	}
+	System.out.print("La mejor solución es:");
+	for(int i = 0; i < tsp.solution.length; ++i) {
+	    System.out.print(" " + tsp.solution[i]);
 	}
     }
 
     public static int[] getBestNeighbour(TabuList tabu, TSP tsp, int[] currentSol) {
 	int[] bestSol = new int[currentSol.length];
 	System.arraycopy(currentSol, 0, bestSol, 0, bestSol.length);
-	int bestCost = TSP.getCost(currentSol);
-	int city1 = -1;
-	int city2 = -1;
+	double bestCost = TSP.getCost(tsp, currentSol);
+	int city1 = 0;
+	int city2 = 0;
 	boolean first = true;
-
-	for(int i = 0; i < bestSol.length; ++i) {
-	    for(int j = 0; i < bestSol.length; ++j) {
+	for(int i = 1; i <= tsp.numNodes; ++i) {
+	    for(int j = 2; j <= tsp.numNodes; ++j) {
 		if (i == j) continue;
 		int[] newSol = new int[bestSol.length];
 		System.arraycopy(currentSol, 0, newSol, 0, bestSol.length);
 		newSol = swap(i, j, currentSol);
-		int newCost = TSP.getCost(newSol);
-		if((newCost > bestCost || firstNeighbour) && tabu.list[i][j] == 0) {
-		    firstNeighbour = false;
+		double newCost = TSP.getCost(tsp, newSol);
+
+		if((newCost > bestCost || first) && tabu.list[i][j] == 0) {
+		    first = false;
 		    city1 = i;
 		    city2 = j;
 		    System.arraycopy(newSol, 0, bestSol, 0, bestSol.length);
@@ -65,7 +83,12 @@ public class TabuSearch {
 		}
 	    }
 	}
-	if(city1 != -1) {
+	System.out.println("HOLA");
+	for(int k = 0; k <= tsp.numNodes; ++k) {
+	    System.out.print(" " + currentSol[k]);
+	}
+
+	if(city1 != 0) {
 	    tabu.decrementTabu();
 	    tabu.add(city1, city2);
 	}
@@ -101,15 +124,15 @@ class TSP {
 
     public TSP(double[][] costs) {
 	this.costs = costs;
-	this.numNodes = costos.length;
+	this.numNodes = costs.length -1;
         // bestCost = 0;
-	solution = new int[numNodos];
+	solution = new int[numNodes+1];
     }
 
-    public static double getCost(int[] path) {
+    public static double getCost(TSP tsp, int[] path) {
 	double cost = 0;
-	for(int i = 0; i < numNodes-1; ++i) {
-	    cost += costs[path[i]][path[i+1]];
+	for(int i = 1; i < tsp.numNodes-1; ++i) {
+	    cost += tsp.costs[path[i]][path[i+1]];
 	}
 	return cost;
     }
@@ -178,8 +201,13 @@ class TabuList {
     int tabuSize;
 
     public TabuList(int numNodos, int tabuSize) {
-	list = new list[numNodos][numNodos];
+	list = new int[numNodos+1][numNodos+1];
 	this.tabuSize = tabuSize;
+	for(int i = 0; i <= numNodos; ++i) {
+	    for(int j = 0; j <= numNodos; ++j) {
+		list[i][j] = 0;
+	    }
+	}
     }
 
     public void add(int node1, int node2) {
@@ -188,8 +216,8 @@ class TabuList {
     }
 
     public void decrementTabu() {
-	for(int i = 0; i < list.length; ++i) {
-	    for(int j = 0; < list.length; ++j) {
+	for(int i = 0; i < tabuSize; ++i) {
+	    for(int j = 0; j < tabuSize; ++j) {
 		if(list[i][j] != 0) {
 		    list[i][j] -= 1;
 		}
@@ -214,28 +242,31 @@ class Reader {
       (mediante uno de los archivos output.txt creados con Preprocessor)
     */
     public static double[][] readInput() {
-        File file = new File(System.in);
-        try {
+        // File file = new File(System.in);
+        // try {
             
-            Scanner scanner = new Scanner(file);
+            // Scanner scanner = new Scanner(file);
+	    Scanner scanner = new Scanner(System.in);
             int numNodos = scanner.nextInt();
-            double[][] l = new double[numNodos][numNodos];
+	    // System.out.println("numNffodos: " + numNodos);
+            double[][] l = new double[numNodos+1][numNodos+1];
 
-            for(int i = 0; i < numNodos; ++i) {
+            for(int i = 1; i <= numNodos; ++i) {
                 scanner.nextDouble();
-                for(int j = 0; j < numNodos; ++j) {
+                for(int j = 1; j <= numNodos; ++j) {
                     l[i][j] = scanner.nextDouble();
                 }
             }
-            for (int i = 0; i < numNodos; i++) {
+            for (int i = 1; i <= numNodos; i++) {
                 l[i][i] = 1000000;
             }
             return l;
             
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("File not Found");
-        } 
-        return null;
+        // }
+        // // catch (FileNotFoundException e) {
+	// catch (Exception e) {
+        //     System.out.println("File not Found");
+        // } 
+        // return null;
     }
 }

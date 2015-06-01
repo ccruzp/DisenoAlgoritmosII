@@ -19,36 +19,31 @@ import java.util.Scanner;
 import java.util.Arrays;
 
 public class TabuSearch {
-    static int numIterations = 1;
-    static int tabuLength = 10;
+    static int numIterations = 2500;
+    static int tabuLength = 20;
+    static float[][] m = new float[][]{{0, 1, 3, 4, 5}, // Caso de la página para hacer pruebas
+		{1, 0, 1, 4, 8},
+		{3, 1, 0, 5, 1},
+		{4, 4, 5, 0, 2},
+		{5, 8, 1, 2, 0}};
 
     public static void main(String[] args) {
-	TSP tsp = new TSP(Reader.readInput());
-	TabuList tabu = new TabuList(tsp.numNodes, tabuLength);
-	int currentSol[] = new int[tsp.numNodes+1];
-	for(int i = 1; i <= tsp.numNodes; ++i) {
+	TSP tsp = new TSP(Reader.readInput()); // Crea el TSP
+	// TSP tsp = new TSP(m);
+
+	TabuList tabu = new TabuList(tsp.numNodes, tabuLength); // Crea la lista Tabu
+	int currentSol[] = new int[tsp.numNodes+1]; // Almacena la solución actual
+	for(int i = 0; i < tsp.numNodes; ++i) {
 	    currentSol[i] = i;
 	}
+	// currentSol = TSP.localSearch(tsp);
 	System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes+1);
-	double bestCost = TSP.getCost(tsp, tsp.solution);
+	float bestCost = TSP.getCost(tsp, currentSol); // Guarda la mejor solución encontrada hasta ahora.
 	for(int i = 0; i < numIterations; ++i) {
-	    System.out.println("Iteración #" + i);
-	    // for(int j = 0; j <= tsp.numNodes; ++j) {
-	    // 	System.out.print(" " + currentSol[j]);
-	    // }
-	    // System.out.println();
-	    // System.out.println();
-	    // System.out.println();
-	    currentSol = TabuSearch.getBestNeighbour(tabu, tsp, currentSol);
-	    // for(int j = 0; j <= tsp.numNodes; ++j) {
-	    // 	System.out.print(" " + currentSol[j]);
-	    // }
-	    System.out.println();
-	    double currentCost = TSP.getCost(tsp, currentSol);
-	    // System.out.printf("Current: " + currentCost + "\nBest: " + bestCost + "\n");
-	    // System.out.println(currentCost - bestCost);
-	    if(Double.compare(currentCost, bestCost) < 0) {
-		System.out.println("Entré");
+	    // System.out.println("Iteración #" + i);
+	    currentSol = TabuSearch.getBestNeighbour(tabu, tsp, currentSol); // Busca la mejor solución en la vecindad.
+	    float currentCost = TSP.getCost(tsp, currentSol); // Calcula el costo de la solución actual
+	    if(currentCost < bestCost) { // Si el costo de la solución actual es menor que el de la mejor solución encontrada hasta ahora, entonces la solución actual es la nueva mejor solución.
 		System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes);
 		bestCost = currentCost;
 	    }
@@ -57,24 +52,26 @@ public class TabuSearch {
 	for(int i = 0; i < tsp.solution.length; ++i) {
 	    System.out.print(" " + tsp.solution[i]);
 	}
+	System.out.println("Costo: " + bestCost);
     }
 
+    // Busca la mejor solución en la vecindad.
     public static int[] getBestNeighbour(TabuList tabu, TSP tsp, int[] currentSol) {
 	int[] bestSol = new int[currentSol.length];
 	System.arraycopy(currentSol, 0, bestSol, 0, bestSol.length);
-	double bestCost = TSP.getCost(tsp, currentSol);
+	float bestCost = TSP.getCost(tsp, currentSol);
 	int city1 = 0;
 	int city2 = 0;
 	boolean first = true;
-	for(int i = 1; i <= tsp.numNodes; ++i) {
-	    for(int j = 2; j <= tsp.numNodes; ++j) {
+	for(int i = 1; i < bestSol.length-1; ++i) {
+	    for(int j = 2; j < bestSol.length-1; ++j) {
 		if (i == j) continue;
 		int[] newSol = new int[bestSol.length];
 		System.arraycopy(currentSol, 0, newSol, 0, bestSol.length);
 		newSol = swap(i, j, currentSol);
-		double newCost = TSP.getCost(tsp, newSol);
 
-		if((newCost > bestCost || first) && tabu.list[i][j] == 0) {
+		float newCost = TSP.getCost(tsp, newSol);
+		if((newCost < bestCost || first) && tabu.list[i][j] == 0) {
 		    first = false;
 		    city1 = i;
 		    city2 = j;
@@ -83,10 +80,6 @@ public class TabuSearch {
 		}
 	    }
 	}
-	System.out.println("HOLA");
-	for(int k = 0; k <= tsp.numNodes; ++k) {
-	    System.out.print(" " + currentSol[k]);
-	}
 
 	if(city1 != 0) {
 	    tabu.decrementTabu();
@@ -94,7 +87,7 @@ public class TabuSearch {
 	}
 	return bestSol;
     }
-
+    // Cambia dos ciudades
     public static int[] swap(int city1, int city2, int[] sol) {
 	int temp = sol[city1];
 	sol[city1] = sol[city2];
@@ -111,7 +104,7 @@ public class TabuSearch {
   - listaNodos: es un arreglo que almacena todos los nodos del grafo.
   - caminos: Arreglo que posee para cada elemento, a cual se mueve (la siguiente ciudad a recorrer)
 
-  - costos: Es una matriz de double que guarda en cada posiciÃ³n (i, j) 
+  - costos: Es una matriz de int que guarda en cada posiciÃ³n (i, j) 
             el costo de viajar entre el nodo i y el nodo j, y viceversa.
   - vecinos: Lista ordenada de los nodos mas cercanos a cada nodo.
   - recorrido: define el costo total de hacer un recorrido.
@@ -119,76 +112,63 @@ public class TabuSearch {
 class TSP {
     int numNodes;
     int[] solution;
-    double[][] costs;
-    // double bestCost;
+    float[][] costs;
 
-    public TSP(double[][] costs) {
+    public TSP(float[][] costs) {
+
 	this.costs = costs;
-	this.numNodes = costs.length -1;
-        // bestCost = 0;
+	this.numNodes = costs.length;
 	solution = new int[numNodes+1];
     }
 
-    public static double getCost(TSP tsp, int[] path) {
-	double cost = 0;
-	for(int i = 1; i < tsp.numNodes-1; ++i) {
+    // Calcula el costo de recorrer un camino.
+    public static float getCost(TSP tsp, int[] path) {
+	float cost = 0;
+	float s;
+	for(int i = 0; i < tsp.numNodes; ++i) {
 	    cost += tsp.costs[path[i]][path[i+1]];
 	}
 	return cost;
     }
-    // public static void main(String args[]) {
-    // 	TSP tsp = new TSP(Reader.readInput());
+
+    // Local search. No lo logra mucho.
+    public static int[] localSearch(TSP tsp) {
         
-    //Crea un camino inicial mediante busqueda de vecinos (Nearest Neighbor)
-    // int[] set = new int[numNodos];
-    // Arrays.fill(set,0);
-    // int start = 30;          //Nodo donde comienza y cierra el ciclo
-    // int num = numNodos;
-    // int l = start;
-    // while (num-- > 1) {
-    //     double menor = Double.MAX_VALUE;
-    //     int nodoDes = 0;
-    //     for(int j = 0; j < numNodos; ++j) {
-    //         if (costos[l][j] <= menor && set[j] < 1 && (l != j)) {
-    //             menor = costos[l][j];
-    //             nodoDes = j;
-    //         }
-    //     }
-    //     caminos[l] = nodoDes;
-    //     recorrido += menor;
-    //     set[l]++;
-    //     set[nodoDes]++;
-    //     l = nodoDes;
+	int[] set = new int[tsp.numNodes];
+	int[] camino = new int[tsp.numNodes];
+	float recorrido = 0;
+	Arrays.fill(set,0);
+	int start = 0;          //Nodo donde comienza y cierra el ciclo
+	int num = tsp.numNodes;
+	int l = start;
+	while (num-- > 1) {
+	    float menor = Integer.MAX_VALUE;
+	    int nodoDes = 0;
+	    for(int j = 0; j < tsp.numNodes; ++j) {
+		if (tsp.costs[l][j] <= menor && set[j] < 1 && (l != j)) {
+		    menor = tsp.costs[l][j];
+		    nodoDes = j;
+		}
+	    }
+	    camino[l] = nodoDes;
+	    recorrido += menor;
+	    set[l]++;
+	    set[nodoDes]++;
+	    l = nodoDes;
     
-    // }
-    // caminos[l] = start;
-    // recorrido += costos[l][start];
-    // System.out.println("METODO DEL VECINO MAS CERCANO");
-    // System.out.println("Costo total= " + recorrido);
-    
-    // //Optimiza el camino ya creado mediante 2-opt
-    // boolean improvement = true;
-    // while(improvement) {
-    //     improvement = false;
-    //     for (int i = 0; i < numNodos-1; i++) {
-    //         for (int j = i+1; j < numNodos; j++) {
-    //             //busca los candidatos
-    //             int i2 = caminos[i];
-    //             int j2 = caminos[j];
-    //                 double costoActual = costos[i][i2] + costos[j][j2];
-    //                 double nuevoCosto = costos[i][j] + costos[i2][j2];
-    //                 if (costoActual > nuevoCosto) {
-    //                     improvement = true;
-    //                     recorrido = recorrido - costoActual + nuevoCosto;
-    //                     caminos[i] = j;
-    //                     caminos[i2] = j2;
-    //                 }
-    //         }
-    //     }
-    // }    
-    // System.out.println("OPTIMIZACION 2-OPT");
-    // System.out.println("Costo total= " + recorrido);
-    // }
+	}
+	camino[l] = start;
+	recorrido += tsp.costs[l][start];
+	System.out.println("METODO DEL VECINO MAS CERCANO");
+	System.out.println("Costo total= " + recorrido);
+	
+	tsp.solution[0] = 0;
+	tsp.solution[tsp.numNodes] = 0;
+	for(int i = 1; i < camino.length; ++i) {
+	    tsp.solution[i] = camino[tsp.solution[i-1]];
+	}
+	return tsp.solution;
+    }
 }
 
 
@@ -201,10 +181,10 @@ class TabuList {
     int tabuSize;
 
     public TabuList(int numNodos, int tabuSize) {
-	list = new int[numNodos+1][numNodos+1];
+	list = new int[numNodos][numNodos];
 	this.tabuSize = tabuSize;
-	for(int i = 0; i <= numNodos; ++i) {
-	    for(int j = 0; j <= numNodos; ++j) {
+	for(int i = 0; i < numNodos; ++i) {
+	    for(int j = 0; j < numNodos; ++j) {
 		list[i][j] = 0;
 	    }
 	}
@@ -216,8 +196,8 @@ class TabuList {
     }
 
     public void decrementTabu() {
-	for(int i = 0; i < tabuSize; ++i) {
-	    for(int j = 0; j < tabuSize; ++j) {
+	for(int i = 0; i < list.length; ++i) {
+	    for(int j = 0; j < list.length; ++j) {
 		if(list[i][j] != 0) {
 		    list[i][j] -= 1;
 		}
@@ -241,7 +221,7 @@ class Reader {
       FunciÃ³n: lee la información por entrada estándar 
       (mediante uno de los archivos output.txt creados con Preprocessor)
     */
-    public static double[][] readInput() {
+    public static float[][] readInput() {
         // File file = new File(System.in);
         // try {
             
@@ -249,16 +229,24 @@ class Reader {
 	    Scanner scanner = new Scanner(System.in);
             int numNodos = scanner.nextInt();
 	    // System.out.println("numNffodos: " + numNodos);
-            double[][] l = new double[numNodos+1][numNodos+1];
-
-            for(int i = 1; i <= numNodos; ++i) {
-                scanner.nextDouble();
-                for(int j = 1; j <= numNodos; ++j) {
-                    l[i][j] = scanner.nextDouble();
+            float[][] l = new float[numNodos][numNodos];
+	    float v;
+	    for (int i = 0; i < numNodos; ++i) {
+		for(int j = i; j < numNodos; ++j) {
+		    l[i][j] = 0;
+		}
+	    }
+            for(int i = 0; i < numNodos; ++i) {
+                scanner.nextFloat();
+                for(int j = 0; j < numNodos; ++j) {
+		    if(i == j) {
+			l[i][j] = Integer.MAX_VALUE;
+		    } else {
+			v = scanner.nextFloat();
+			l[i][j] = v;
+			l[j][i] = v;
+		    }
                 }
-            }
-            for (int i = 1; i <= numNodos; i++) {
-                l[i][i] = 1000000;
             }
             return l;
             

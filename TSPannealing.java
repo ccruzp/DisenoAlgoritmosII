@@ -12,7 +12,7 @@ costos:   Permite realizar busquedas de costos en orden constante. Como los cost
 recorrido:bleh
 
  */
-package tsp;
+// package tsp;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,7 +34,7 @@ import java.lang.Math;
   - vecinos: Lista ordenada de los nodos mas cercanos a cada nodo.
   - recorrido: define el costo total de hacer un recorrido.
 */
-public class TSP {
+public class TSPannealing {
     static int numNodos;
     static int[] caminos;
     static double[][] costos;
@@ -45,7 +45,7 @@ public class TSP {
         
 
         
-	TSP tsp = new TSP(Reader.readInput());
+	TSPannealing tsp = new TSPannealing(Reader.readInput());
         
         
         //Genera una solucion inicial
@@ -211,7 +211,7 @@ public class TSP {
     }
     
     //Constructor de la clase TSP
-    public TSP (double[][] costos) {
+    public TSPannealing (double[][] costos) {
 	this.costos = costos;
 	this.numNodos = costos.length;
         recorrido = 0;
@@ -238,10 +238,10 @@ class Reader {
       (mediante uno de los archivos output.txt creados con Preprocessor)
     */
     public static double[][] readInput() {
-        File file = new File("C:\\Users\\GabrielAugusto\\Downloads\\output_144.txt");
-        try {
+        // File file = new File("C:\\Users\\GabrielAugusto\\Downloads\\output_144.txt");
+        // try {
             
-            Scanner scanner = new Scanner(file);
+            Scanner scanner = new Scanner(System.in);
             int numNodos = scanner.nextInt();
             double[][] l = new double[numNodos][numNodos];
 
@@ -256,10 +256,10 @@ class Reader {
             }
             return l;
             
-        }
-        catch (FileNotFoundException e) {
-            System.out.println("File not Found");
-        } 
-        return null;
+        // }
+        // catch (FileNotFoundException e) {
+        //     System.out.println("File not Found");
+        // } 
+        // return null;
     }
 }

@@ -19,8 +19,8 @@ import java.util.Scanner;
 import java.util.Arrays;
 
 public class TabuSearch {
-    static int numIterations = 5000;
-    static int tabuLength = 300;
+    static int numIterations = 10000;
+    static int tabuLength = 20;
     static float[][] m = new float[][]{{0, 1, 3, 4, 5}, // Caso de la página para hacer pruebas
 				       {1, 0, 1, 4, 8},
 				       {3, 1, 0, 5, 1},
@@ -38,6 +38,10 @@ public class TabuSearch {
 	// }
 	// currentSol = TSP.localSearch(tsp);
 	currentSol = TSP.nearestNeighbour(tsp);
+	System.out.println("Nearest Neighbour");
+	for(int i = 0; i < currentSol.length; ++i) {
+	    System.out.print(" " + currentSol[i]);
+	}
 	System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes+1);
 	float bestCost = TSP.getCost(tsp, currentSol); // Guarda la mejor solución encontrada hasta ahora.
 	System.out.println("Initial Cost: " + bestCost);
@@ -89,10 +93,10 @@ public class TabuSearch {
 	    }
 	}
 	
-	// if(city1 != 0) {
-	tabu.decrementTabu();
-	tabu.add(city1, city2);
-	// }
+	if(city1 != 0) {
+	    tabu.decrementTabu();
+	    tabu.add(city1, city2);
+	}
 	return bestSol;
     }
     // Cambia dos ciudades
@@ -157,37 +161,64 @@ class TSP {
     // Local search. No lo logra mucho.
     // public static int[] localSearch(TSP tsp) {
     public static int[] nearestNeighbour(TSP tsp) {
-	
 	int numNodos = tsp.numNodes;
-	int[] set = new int[numNodos+1];
-	int[] camino = new int[numNodos+1];
-	Arrays.fill(set,0);
-	int start = 0;          //Nodo donde comienza y cierra el ciclo
-	int num = numNodos+1;
-	int i = 0;
-	set[start]++;
-	set[numNodos]++;
-	camino[0] = 0;
-	camino[numNodos] = 0;
+	int[] set = new int[numNodos];
+        Arrays.fill(set, 0);
+	int[] trace = new int[numNodos + 1];
+        int start = 0;
+        trace[0] = start;
+        trace[numNodos] = 0;
         
-	while (i < numNodos) {
-	    double menor = Integer.MAX_VALUE;
-	    int nodoDes = 0;
-	    for(int j = 1; j < numNodos; j++) {
-		if (tsp.costs[camino[i]][j] <= menor && set[j] < 1 && camino[i]!=j) {
-		    menor = tsp.costs[camino[i]][j];
-		    nodoDes = j;
-		}
-	    }
-	    camino[i+1] = nodoDes;
-	    
-	    set[nodoDes]++;
-	    i++;
-	}
-	
-	
-	return camino;
+        for (int i = 0; i < numNodos; i++) {
+            double bestCost = Double.MAX_VALUE;
+            int newCity = 0;
+        
+            for (int j = 0; j < numNodos; j++) {
+                if (tsp.costs[trace[i]][j] < bestCost && set[j] < 1) {
+                    
+                    bestCost = tsp.costs[trace[i]][j];
+                    newCity = j;
+                }
+                        
+            }
+            trace[i+1] = newCity;
+            set[trace[i]]++;
+            set[newCity]++;
+        }
+        
+	return trace;
     }
+    // 	int numNodos = tsp.numNodes;
+    // 	int[] set = new int[numNodos+1];
+    // 	int[] camino = new int[numNodos+1];
+    // 	Arrays.fill(set,0);
+    // 	int start = 0;          //Nodo donde comienza y cierra el ciclo
+    // 	int num = numNodos+1;
+    // 	int i = 0;
+    // 	set[start]++;
+    // 	set[numNodos]++;
+    // 	camino[0] = 0;
+    // 	camino[numNodos] = 0;
+        
+    // 	while (i < numNodos) {
+    // 	    double menor = Integer.MAX_VALUE;
+    // 	    int nodoDes = 0;
+    // 	    for(int j = 1; j < numNodos; j++) {
+    // 		if (tsp.costs[camino[i]][j] <= menor && set[j] < 1 && camino[i]!=j) {
+    // 		    menor = tsp.costs[camino[i]][j];
+    // 		    nodoDes = j;
+    // 		}
+    // 	    }
+    // 	    camino[i+1] = nodoDes;
+	    
+    // 	    set[nodoDes]++;
+    // 	    i++;
+    // 	}
+	
+	
+    // 	return camino;
+    // }
+	// // // // // // // //
     // int[] set = new int[tsp.numNodes];
     // int[] camino = new int[tsp.numNodes];
     // float recorrido = 0;

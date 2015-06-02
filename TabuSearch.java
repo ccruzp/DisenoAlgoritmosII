@@ -1,7 +1,14 @@
 /*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package tabusearch;
+
+/*
   LAS ESTRUCTURAS SE USARON PORQUE    
   numNodos: Permite la iteracion a traves de los elementos sencillamente,
-  sintener que recurrir a funciones de tamaño de arreglos
+  sintener que recurrir a funciones de tamaÃ±o de arreglos
   caminos:  Asigna sencillamente a cada elemento su siguiente. Permite conocer
   el sucesor en orden lineal, lo cual ayuda enormemente para optimizacion 2-opt.
   Tambien otorga la idea de un ciclo dirigido, que tiene mas sentido 
@@ -15,24 +22,21 @@
 
 // import java.io.File;
 // import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Arrays;
 
 public class TabuSearch {
-    static int numIterations = 10000;
+    static int numIterations = 5;
     static int tabuLength = 20;
-    static float[][] m = new float[][]{{0, 1, 3, 4, 5}, // Caso de la página para hacer pruebas
-				       {1, 0, 1, 4, 8},
-				       {3, 1, 0, 5, 1},
-				       {4, 4, 5, 0, 2},
-				       {5, 8, 1, 2, 0}};
     
     public static void main(String[] args) {
 	TSP tsp = new TSP(Reader.readInput()); // Crea el TSP
 	// TSP tsp = new TSP(m);
 	
 	TabuList tabu = new TabuList(tsp.numNodes, tabuLength); // Crea la lista Tabu
-	int currentSol[] = new int[tsp.numNodes+1]; // Almacena la solución actual
+	int currentSol[] = new int[tsp.numNodes]; // Almacena la soluciÃ³n actual
 	// for(int i = 0; i < tsp.numNodes; ++i) {
 	//     currentSol[i] = i;
 	// }
@@ -42,27 +46,29 @@ public class TabuSearch {
 	for(int i = 0; i < currentSol.length; ++i) {
 	    System.out.print(" " + currentSol[i]);
 	}
-	System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes+1);
-	float bestCost = TSP.getCost(tsp, currentSol); // Guarda la mejor solución encontrada hasta ahora.
+        System.out.println();
+	System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes);
+	float bestCost = TSP.getCost(tsp, currentSol); // Guarda la mejor soluciÃ³n encontrada hasta ahora.
 	System.out.println("Initial Cost: " + bestCost);
 	for(int i = 0; i < numIterations; ++i) {
-	    // System.out.println("Iteración #" + i);
-	    currentSol = TabuSearch.getBestNeighbour(tabu, tsp, currentSol); // Busca la mejor solución en la vecindad.
-	    float currentCost = TSP.getCost(tsp, currentSol); // Calcula el costo de la solución actual
+	    // System.out.println("IteraciÃ³n #" + i);
+	    currentSol = TabuSearch.getBestNeighbour(tabu, tsp, currentSol); // Busca la mejor soluciÃ³n en la vecindad.
+	    float currentCost = TSP.getCost(tsp, currentSol); // Calcula el costo de la soluciÃ³n actual
 
-	    if(currentCost < bestCost) { // Si el costo de la solución actual es menor que el de la mejor solución encontrada hasta ahora, entonces la solución actual es la nueva mejor solución.
+	    if(currentCost < bestCost) { // Si el costo de la soluciÃ³n actual es menor que el de la mejor soluciÃ³n encontrada hasta ahora, entonces la soluciÃ³n actual es la nueva mejor soluciÃ³n.
 		System.arraycopy(currentSol, 0, tsp.solution, 0, tsp.numNodes);
 		bestCost = currentCost;
 	    }
 	}
-	System.out.print("La mejor solución es:");
+	System.out.print("La mejor soluciÃ³n es:");
 	for(int i = 0; i < tsp.solution.length; ++i) {
 	    System.out.print(" " + tsp.solution[i]);
 	}
+        System.out.println();
 	System.out.println("Costo: " + bestCost);
     }
     
-    // Busca la mejor solución en la vecindad.
+    // Busca la mejor soluciÃ³n en la vecindad.
     public static int[] getBestNeighbour(TabuList tabu, TSP tsp, int[] currentSol) {
 	int[] bestSol = new int[currentSol.length];
 	System.arraycopy(currentSol, 0, bestSol, 0, bestSol.length);
@@ -110,13 +116,13 @@ public class TabuSearch {
 
 /*
   Clase: TSP
-  FunciÃ³n: implementa el TSP. Esta es la clase principal.
-  ParÃ¡metros:
-  - numNodos: representa el nÃºmero de nodos que tiene el grafo.
+  FunciÃƒÂ³n: implementa el TSP. Esta es la clase principal.
+  ParÃƒÂ¡metros:
+  - numNodos: representa el nÃƒÂºmero de nodos que tiene el grafo.
   - listaNodos: es un arreglo que almacena todos los nodos del grafo.
   - caminos: Arreglo que posee para cada elemento, a cual se mueve (la siguiente ciudad a recorrer)
   
-  - costos: Es una matriz de int que guarda en cada posiciÃ³n (i, j) 
+  - costos: Es una matriz de int que guarda en cada posiciÃƒÂ³n (i, j) 
   el costo de viajar entre el nodo i y el nodo j, y viceversa.
   - vecinos: Lista ordenada de los nodos mas cercanos a cada nodo.
   - recorrido: define el costo total de hacer un recorrido.
@@ -152,7 +158,7 @@ class TSP {
     public static float getCost(TSP tsp, int[] path) {
 	float cost = 0;
 	float s;
-	for(int i = 0; i < tsp.numNodes; ++i) {
+	for(int i = 0; i < tsp.numNodes-1; ++i) {
 	    cost += tsp.costs[path[i]][path[i+1]];
 	}
 	return cost;
@@ -164,12 +170,11 @@ class TSP {
 	int numNodos = tsp.numNodes;
 	int[] set = new int[numNodos];
         Arrays.fill(set, 0);
-	int[] trace = new int[numNodos + 1];
+	int[] trace = new int[numNodos];
         int start = 0;
         trace[0] = start;
-        trace[numNodos] = 0;
         
-        for (int i = 0; i < numNodos; i++) {
+        for (int i = 0; i < numNodos-1; i++) {
             double bestCost = Double.MAX_VALUE;
             int newCity = 0;
         
@@ -258,7 +263,7 @@ class TSP {
 
 /*
   Clase: TabuList
-  Función: mantiene la lista de los movimientos tabú para la búsqueda tabú.
+  FunciÃ³n: mantiene la lista de los movimientos tabÃº para la bÃºsqueda tabÃº.
 */
 class TabuList {
     int list[][];
@@ -292,7 +297,7 @@ class TabuList {
 
 /*
   Clase: Reader
-  FunciÃ³n: procesa el archivo de entrada y crea la lista de nodos.
+  FunciÃƒÂ³n: procesa el archivo de entrada y crea la lista de nodos.
 */
 
 class Reader {
@@ -301,44 +306,42 @@ class Reader {
     }
     
     /*
-      Método: readInput.
-      FunciÃ³n: lee la información por entrada estándar 
+      MÃ©todo: readInput.
+      FunciÃƒÂ³n: lee la informaciÃ³n por entrada estÃ¡ndar 
       (mediante uno de los archivos output.txt creados con Preprocessor)
     */
     public static float[][] readInput() {
-        // File file = new File(System.in);
-        // try {
-        
-	// Scanner scanner = new Scanner(file);
-	Scanner scanner = new Scanner(System.in);
-	int numNodos = scanner.nextInt();
-	// System.out.println("numNffodos: " + numNodos);
-	float[][] l = new float[numNodos][numNodos];
-	float v;
-	for (int i = 0; i < numNodos; ++i) {
-	    for(int j = i; j < numNodos; ++j) {
-		l[i][j] = 0;
-	    }
-	}
-	for(int i = 0; i < numNodos; ++i) {
-	    scanner.nextFloat();
-	    for(int j = 0; j < numNodos; ++j) {
-		if(i == j) {
-		    l[i][j] = Integer.MAX_VALUE;
-		} else {
-		    v = scanner.nextFloat();
-		    l[i][j] = v;
-		    l[j][i] = v;
-		}
-	    }
-	}
-	return l;
-        
-        // }
-        // // catch (FileNotFoundException e) {
-	// catch (Exception e) {
-        //     System.out.println("File not Found");
-        // } 
-        // return null;
+        File file = new File("C:\\Users\\GabrielAugusto\\Downloads\\rl1889.txt");
+        try {
+            
+            Scanner scanner = new Scanner(file);
+            int numNodos = scanner.nextInt();
+            float[][] l = new float[numNodos][numNodos];
+            scanner.nextInt();
+            
+            
+            for(int i = 0; i < numNodos-1; ++i) {
+                
+                for(int j = 0; j < numNodos; ++j) {
+                    l[i][j] = scanner.nextFloat();
+                }
+                scanner.nextInt();
+                scanner.nextInt();
+            }
+            //Last isolated case
+            for(int j = 0; j < numNodos; ++j) {
+                    l[numNodos-1][j] = scanner.nextFloat();
+            }
+            
+            for (int i = 0; i < numNodos; i++) {
+                l[i][i] = Integer.MAX_VALUE;
+            }
+           
+            return l;
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("File not Found");
+        } 
+        return null;
     }
 }

@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.Arrays;
+import java.util.Random;
 
 public class AntColony {
     // Algorithm parameters
@@ -18,7 +19,7 @@ public class AntColony {
     // Probability of selecting the next town completely random
     double pr = 0.01;
     // Number of iterations
-    int maxIter = 2000;
+    int maxIter = 1000;
 
     // number of nodes
     int numNodes = 0;
@@ -44,13 +45,19 @@ public class AntColony {
     public AntColony() {
 	costs = Reader.readInput(); // Read the costs matrix.
 	numNodes = costs.length; // Number of nodes (cities).
-	numAnts = numAntFactor * numNodes; // Number of ants.
+	numAnts = (int) (numAntFactor * numNodes); // Number of ants.
 	trails = new double[numNodes][numNodes]; // Matrix for the ant's trails for every node pair
 	probs = new double[numNodes]; // Array for the probability of moving to a certain node
 	ants = new Ant[numAnts]; // Array of ants.
 	for(int i = 0; i < numAnts; ++i) {
-	    ants[i] = new Ant();
+	    ants[i] = new Ant(numNodes);
 	}
+    }
+
+    public static double pow(final double a, final double b) {
+	final int x = (int) (Double.doubleToLongBits(a) >>  32);
+	final int y = (int) (b * (x - 1072632447) + 1072632447);
+        return Double.longBitsToDouble(((long) y) << 32);
     }
 
     public boolean probTo(Ant ant) {
@@ -58,16 +65,22 @@ public class AntColony {
 	double denom = 0.0;
 	double numerator;
 	for(int j = 0; j < numNodes; ++j) {
-	    if(!ant.visited(j)) {
+	    if(!ant.isVisited(j) && costs[i][j] != 0.0) {
 		denom += pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
+		// if(Double.isNaN(denom)) {
+		//     System.out.println("Cost: " + costs[i][j]);
+		// }
+		// System.out.println("DENOM: " + denom);
 	    }
 	}
 	for(int j = 0; j < numNodes; ++j) {
-	    if(ant.visited[j]) {
-		probs[j] = 0;
+	    if(ant.isVisited(j)) {
+		probs[j] = 0.0;
 	    } else {
 		numerator = pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
+		// System.out.println("DENOM: " + denom);
 		probs[j] = numerator / denom;
+		// System.out.println("PROB" + probs[j]);
 	    }
 	}
 	return true;
@@ -77,8 +90,8 @@ public class AntColony {
 	if(rand.nextDouble() < pr) { 
 	    int t = rand.nextInt(numNodes - currentIndex); // random Node
 	    int j = -1;
-	    for(int i = 0; i < numNodes; ++j) {
-		if(!ant.visited[i]) {
+	    for(int i = 0; i < numNodes; ++i) {
+		if(!ant.isVisited(i)) {
 		    ++j;
 		}
 		if(j == t) {
@@ -88,13 +101,16 @@ public class AntColony {
 	}
 	probTo(ant);
 	double r = rand.nextDouble();
+	// System.out.println("R: " + r);
 	double tot = 0;
 	for(int i = 0; i < numNodes; ++i) {
 	    tot += probs[i];
+	    // System.out.println("TOT: " + tot);
 	    if(tot >= r) {
 		return i;
 	    }
 	}
+	throw new RuntimeException("Not supposed to get here.");
     }
 
     public boolean updateTrails() {
@@ -107,7 +123,7 @@ public class AntColony {
 
 	// Ant's trail
 	for(int i = 0; i < numAnts; ++i) {
-	    double contribution = Q / ants[i].getCost();
+	    double contribution = Q / ants[i].getCost(costs);
 	    for(int j = 0; j < numNodes-1; ++j) {
 		trails[ants[i].path[j]][ants[i].path[j+1]] += contribution;
 	    }
@@ -119,7 +135,9 @@ public class AntColony {
     // Choose nextTown for all ants
     public boolean moveAnts() {
 	// Each ant follows the trail
+	// System.out.println("\t\tnumNodes: " + numNodes); 
 	while(currentIndex < numNodes-1) {
+	// System.out.println("\t\tcurrentIndex: " + currentIndex); 
 	    for(int i = 0; i < numAnts; ++i) {
 		ants[i].visitNode(selectNextNode(ants[i]), currentIndex);
 	    }
@@ -140,12 +158,13 @@ public class AntColony {
     }
 
     public boolean updateBestSolution() {
+	double newCost;
 	if(bestSolution == null) {
 	    bestSolution = ants[0].path;
-	    bestCost = ants[0].getCost();
+	    bestCost = ants[0].getCost(costs);
 	}
 	for(int i = 0; i < numAnts; ++i) {
-	    newCost = ants[i].getCost();
+	    newCost = ants[i].getCost(costs);
 	    if(newCost <  bestCost) {
 		bestCost = newCost;
 		bestSolution = ants[i].path.clone();
@@ -154,7 +173,8 @@ public class AntColony {
 	return true;
     }
 
-    public int[] solve() {
+    // public int[] solve() {
+    public double solve() {
 	// Clear trails
 	for(int i = 0; i < numNodes; ++i) {
 	    for(int j = 0; j < numNodes; ++j) {
@@ -163,18 +183,30 @@ public class AntColony {
 	}
 	int iter = 0;
 	while(iter < maxIter) {
+	    System.out.println("Iteration: " + iter);
 	    setupAnts();
+	    // System.out.println("    Seteo");
 	    moveAnts();
+	    // System.out.println("    Move");
 	    updateTrails();
+	    // System.out.println("    Trails");
 	    updateBestSolution();
+	    // System.out.println("    Sol");
 	    ++iter;
 	}
-	return bestSolution.clone();
+	System.out.println("Solution: ");
+	for(int i = 0; i < numNodes; ++i) {
+	    System.out.print(bestSolution[i] + " ");
+	}
+	// return bestSolution.clone();
+	Ant ant = new Ant(bestSolution);
+	return ant.getCost(costs);
     }
 
     public static void main(String[] args) {
 	AntColony antColony = new AntColony();
-	AntColony.solve();
+	double sol = antColony.solve();
+	System.out.println("Costo: " + sol);
     }
 }
 
@@ -185,6 +217,11 @@ class Ant {
     public Ant(int numNodes) {
 	path = new int[numNodes];
 	visited = new boolean[numNodes];
+    }
+
+    public Ant(int[] sol) {
+	path = sol.clone();
+	visited = new boolean[sol.length];
     }
 
     public boolean visitNode(int node, int currentIndex) {
@@ -227,25 +264,29 @@ class Reader {
 	Scanner scanner = new Scanner(System.in);
 	int numNodos = scanner.nextInt();
 	double[][] l = new double[numNodos][numNodos];
-	scanner.nextInt();
-	
+	double read;
+	scanner.nextInt();	
         
 	for(int i = 0; i < numNodos; ++i) {
 	    
 	    for(int j = 0; j < numNodos; ++j) {
-		l[i][j] = scanner.nextDouble();
+
+		read = scanner.nextDouble();
+		if(read == 0) l[i][j] = Integer.MAX_VALUE;
+		else l[i][j] = read;
+		// l[i][j] = scanner.nextDouble();
 	    }
 	    // scanner.nextInt();
 	    // scanner.nextInt();
 	}
 	//Last isolated case
-	for(int j = 0; j < numNodos; ++j) {
-	    l[numNodos-1][j] = scanner.nextDouble();
-	}
+	// for(int j = 0; j < numNodos; ++j) {
+	//     l[numNodos-1][j] = scanner.nextDouble();
+	// }
             
-	for (int i = 0; i < numNodos; i++) {
-	    l[i][i] = Integer.MAX_VALUE;
-	}
+	// for (int i = 0; i < numNodos; i++) {
+	//     l[i][i] = Integer.MAX_VALUE;
+	// }
         
 	return l;
     }

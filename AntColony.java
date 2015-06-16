@@ -268,11 +268,14 @@ class Reader {
 	scanner.nextInt();	
         
 	for(int i = 0; i < numNodos; ++i) {
-	    
+	    // scanner.nextInt();	    
 	    for(int j = 0; j < numNodos; ++j) {
 
 		read = scanner.nextDouble();
-		if(read == 0) l[i][j] = Integer.MAX_VALUE;
+		if(read == 0.0) {
+		    System.out.println("(" + i + ", " + j + ")");
+		    l[i][j] = Integer.MAX_VALUE;
+		}
 		else l[i][j] = read;
 		// l[i][j] = scanner.nextDouble();
 	    }

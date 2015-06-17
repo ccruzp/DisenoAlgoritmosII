@@ -19,7 +19,7 @@ public class AntColony {
     // Probability of selecting the next town completely random
     double pr = 0.01;
     // Number of iterations
-    int maxIter = 1000;
+    int maxIter = 1500;
 
     // number of nodes
     int numNodes = 0;
@@ -65,23 +65,35 @@ public class AntColony {
 	double denom = 0.0;
 	double numerator;
 	for(int j = 0; j < numNodes; ++j) {
-	    if(!ant.isVisited(j) && costs[i][j] != 0.0) {
-		denom += pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
-		// if(Double.isNaN(denom)) {
-		//     System.out.println("Cost: " + costs[i][j]);
-		// }
-		// System.out.println("DENOM: " + denom);
-	    }
+	    // if (i != j) {
+		if(!ant.isVisited(j) && costs[i][j] != 0.0) {
+		    denom += pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
+		    // if(Double.isNaN(denom)) {
+		    //     System.out.println("Cost: " + costs[i][j]);
+		    // }
+		    // System.out.println("DENOM: " + denom);
+		}
+	    // }
 	}
 	for(int j = 0; j < numNodes; ++j) {
-	    if(ant.isVisited(j)) {
-		probs[j] = 0.0;
-	    } else {
-		numerator = pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
-		// System.out.println("DENOM: " + denom);
-		probs[j] = numerator / denom;
-		// System.out.println("PROB" + probs[j]);
-	    }
+	    // if (i != j) {
+		if(ant.isVisited(j)) {
+		    probs[j] = 0.0;
+		} else {
+		    // numerator = pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
+		    double x = pow(trails[i][j], alpha);
+		    double y = pow(1.0 / costs[i][j], beta);
+		    numerator = x * y;
+		    if(Double.isNaN(numerator))	System.out.println("X: " + x + "\nY: " + y);
+		    // if(Double.isNaN(numerator)) System.out.println("COSTO: " + costs[i][j]);
+		    // if(Double.isNaN(numerator))	System.out.println("(" + i + ", " + j + ")");
+		    // System.out.println("DENOM: " + denom);
+		    if(denom == 0.0)
+			denom = 1;
+		    probs[j] = numerator / denom;
+		    if(Double.isNaN(probs[j])) System.out.println("NUM: " + numerator + "\nDENOM: " + denom);
+		}
+	    // }
 	}
 	return true;
     }
@@ -103,14 +115,18 @@ public class AntColony {
 	double r = rand.nextDouble();
 	// System.out.println("R: " + r);
 	double tot = 0;
+	int max = 0;
 	for(int i = 0; i < numNodes; ++i) {
+	    // System.out.println("Antes TOT: " + tot);
+	    // System.out.println("PROB: " + probs[i]);
 	    tot += probs[i];
-	    // System.out.println("TOT: " + tot);
+	    if (probs[i] < probs[max]) max = i;
 	    if(tot >= r) {
 		return i;
 	    }
 	}
-	throw new RuntimeException("Not supposed to get here.");
+	return max;
+	// throw new RuntimeException("Not supposed to get here.");
     }
 
     public boolean updateTrails() {
@@ -265,16 +281,16 @@ class Reader {
 	int numNodos = scanner.nextInt();
 	double[][] l = new double[numNodos][numNodos];
 	double read;
-	scanner.nextInt();	
+	// scanner.nextInt();	
         
 	for(int i = 0; i < numNodos; ++i) {
-	    // scanner.nextInt();	    
+	    scanner.nextInt();	    
 	    for(int j = 0; j < numNodos; ++j) {
 
 		read = scanner.nextDouble();
 		if(read == 0.0) {
-		    System.out.println("(" + i + ", " + j + ")");
-		    l[i][j] = Integer.MAX_VALUE;
+		    // System.out.println("(" + i + ", " + j + ")");
+		    l[i][j] = 8.0;
 		}
 		else l[i][j] = read;
 		// l[i][j] = scanner.nextDouble();

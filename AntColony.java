@@ -4,22 +4,20 @@ import java.util.Random;
 
 public class AntColony {
     // Algorithm parameters
-    // Original amount of trail
-    double c = 1.0;
     // Trail preference
-    double alpha = 1;
+    int alpha = 1;
     // Greedy preference
-    double beta = 5;
+    int beta = 5;
     // Trail evaporation rate
     double evaporation = 0.5;
     // New trail deposit coefficient
-    double Q = 500;
+    double Q = 1000;
     // Number of ants used = numAntFactor * numNodes
     double numAntFactor = 0.8;
     // Probability of selecting the next town completely random
-    double pr = 0.01;
+    double probabilityNextRandom = 0.01;
     // Number of iterations
-    int maxIter = 1500;
+    int maxIter = 1000;
 
     // number of nodes
     int numNodes = 0;
@@ -32,7 +30,7 @@ public class AntColony {
     double[][] trails = null;
     // Ants
     Ant ants[] = null;
-    // Ant's probability of going to some city
+    // Ant's probability of going to each city
     double probs[] = null;
     // Best solution find so far
     int[] bestSolution = null;
@@ -42,6 +40,7 @@ public class AntColony {
     int currentIndex = 0;
     Random rand = new Random();
 
+    // Class constructor of the AntColony
     public AntColony() {
 	costs = Reader.readInput(); // Read the costs matrix.
 	numNodes = costs.length; // Number of nodes (cities).
@@ -54,21 +53,36 @@ public class AntColony {
 	}
     }
 
-    public static double pow(final double a, final double b) {
-	final int x = (int) (Double.doubleToLongBits(a) >>  32);
-	final int y = (int) (b * (x - 1072632447) + 1072632447);
-        return Double.longBitsToDouble(((long) y) << 32);
+    // Method of power created because the Math.pow it's too slow.
+    public double power(double a, int b) {
+	double answer = a;
+	for (int i = 0; i < b; ++i) {
+	    answer *= answer;
+	}
+	return answer;
     }
 
-    public boolean probTo(Ant ant) {
+    // Method to calculate an ant's probability to move to each node.
+    public boolean probToMove(Ant ant) {
 	int i = ant.path[currentIndex];
 	double denom = 0.0;
 	double numerator;
+	double valor;
+	double valor1;
+	double valor2;
 	for(int j = 0; j < numNodes; ++j) {
 	    // if (i != j) {
-		if(!ant.isVisited(j) && costs[i][j] != 0.0) {
-		    denom += pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
-		    // if(Double.isNaN(denom)) {
+		// if(!ant.isVisited(j) && costs[i][j] != 0.0) {
+	    if(!ant.isVisited(j)) {
+		// valor1 = power(trails[i][j], alpha);
+		// valor2 = power(1.0 / costs[i][j], beta);
+		// valor =  valor1*valor2 ;
+		denom += power(trails[i][j], alpha) * power(1.0 / costs[i][j], beta);
+		// if ((denom + valor) == 0.0) {
+		//     System.out.println("Valor1: " + valor1 + "\nValor2" + valor2);
+		// }
+		// denom += valor;
+		// if(Double.isNaN(denom)) {
 		    //     System.out.println("Cost: " + costs[i][j]);
 		    // }
 		    // System.out.println("DENOM: " + denom);
@@ -80,18 +94,23 @@ public class AntColony {
 		if(ant.isVisited(j)) {
 		    probs[j] = 0.0;
 		} else {
-		    // numerator = pow(trails[i][j], alpha) * pow(1.0 / costs[i][j], beta);
-		    double x = pow(trails[i][j], alpha);
-		    double y = pow(1.0 / costs[i][j], beta);
-		    numerator = x * y;
-		    if(Double.isNaN(numerator))	System.out.println("X: " + x + "\nY: " + y);
+		    numerator = power(trails[i][j], alpha) * power(1.0 / costs[i][j], beta);
+		    // double x = power(trails[i][j], alpha);
+		    // double y = power(1.0 / costs[i][j], beta);
+		    // numerator = x * y;
+		    // if(Double.isNaN(numerator))	System.out.println("X: " + x + "\nY: " + y);
 		    // if(Double.isNaN(numerator)) System.out.println("COSTO: " + costs[i][j]);
 		    // if(Double.isNaN(numerator))	System.out.println("(" + i + ", " + j + ")");
 		    // System.out.println("DENOM: " + denom);
-		    if(denom == 0.0)
-			denom = 1;
-		    probs[j] = numerator / denom;
-		    if(Double.isNaN(probs[j])) System.out.println("NUM: " + numerator + "\nDENOM: " + denom);
+		    // if(denom == 0.0)
+		    // 	denom = 1;
+
+		    if(denom == 0.0) {
+			probs[j] = Double.MIN_VALUE;
+		    } else {
+			probs[j] = numerator / denom;
+		    }
+		    // if(Double.isNaN(probs[j])) System.out.println("NUM: " + numerator + "\nDENOM: " + denom);
 		}
 	    // }
 	}
@@ -99,7 +118,7 @@ public class AntColony {
     }
 
     public int selectNextNode(Ant ant) {
-	if(rand.nextDouble() < pr) { 
+	if(rand.nextDouble() < probabilityNextRandom) { 
 	    int t = rand.nextInt(numNodes - currentIndex); // random Node
 	    int j = -1;
 	    for(int i = 0; i < numNodes; ++i) {
@@ -111,7 +130,7 @@ public class AntColony {
 		}
 	    }
 	}
-	probTo(ant);
+	probToMove(ant);
 	double r = rand.nextDouble();
 	// System.out.println("R: " + r);
 	double tot = 0;
@@ -139,7 +158,8 @@ public class AntColony {
 
 	// Ant's trail
 	for(int i = 0; i < numAnts; ++i) {
-	    double contribution = Q / ants[i].getCost(costs);
+	    // double contribution = Q / ants[i].getCost(costs);
+	    double contribution = Q;
 	    for(int j = 0; j < numNodes-1; ++j) {
 		trails[ants[i].path[j]][ants[i].path[j+1]] += contribution;
 	    }
@@ -194,12 +214,12 @@ public class AntColony {
 	// Clear trails
 	for(int i = 0; i < numNodes; ++i) {
 	    for(int j = 0; j < numNodes; ++j) {
-		trails[i][j] = c;
+		trails[i][j] = 1.0;
 	    }
 	}
 	int iter = 0;
 	while(iter < maxIter) {
-	    System.out.println("Iteration: " + iter);
+	    // System.out.println("Iteration: " + iter);
 	    setupAnts();
 	    // System.out.println("    Seteo");
 	    moveAnts();
@@ -226,10 +246,12 @@ public class AntColony {
     }
 }
 
+// Class for the ants.
 class Ant {
-    int[] path;
-    boolean[] visited;
+    int[] path; // Path the ant followed
+    boolean[] visited; // Array that says if an ant has gone to every node
 
+    // Constructor
     public Ant(int numNodes) {
 	path = new int[numNodes];
 	visited = new boolean[numNodes];
@@ -240,16 +262,19 @@ class Ant {
 	visited = new boolean[sol.length];
     }
 
+    // Mark a node visited
     public boolean visitNode(int node, int currentIndex) {
 	path[currentIndex + 1] = node;
 	visited[node] = true;
 	return true;
     }
 
+    // Says if a node has been visited
     public boolean isVisited(int node) {
 	return visited[node];
     }
 
+    // Calculate the costs of an ant's path
     public double getCost(double[][] costs) {
 	double cost = 0;
 	for(int i = 0; i < costs.length-1; ++i) {
@@ -258,6 +283,7 @@ class Ant {
 	return cost;
     }
 
+    // Sets the visited array to false
     public boolean clear() {
 	for(int i = 0; i < visited.length; ++i) {
 	    visited[i] = false;
@@ -266,6 +292,7 @@ class Ant {
     }
 }
 
+// Class reader
 class Reader {
     public Reader() {
 	
@@ -281,8 +308,7 @@ class Reader {
 	int numNodos = scanner.nextInt();
 	double[][] l = new double[numNodos][numNodos];
 	double read;
-	// scanner.nextInt();	
-        
+  
 	for(int i = 0; i < numNodos; ++i) {
 	    scanner.nextInt();	    
 	    for(int j = 0; j < numNodos; ++j) {
